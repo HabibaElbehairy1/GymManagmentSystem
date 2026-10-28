@@ -1,0 +1,35 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build output
+[Bb]in/
+[Oo]bj/
+
+# Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+# NuGet
+*.nupkg
+.nuget/
+
+# Operating system
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local environment settings
+.env
+.env.*
+
+# Local appsettings overrides
+appsettings.Development.json
+appsettings.Local.json
+
+# Local database files
+*.mdf
+*.ldf
