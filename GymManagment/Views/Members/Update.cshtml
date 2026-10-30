@@ -4,28 +4,7 @@
 }
 <div class="container">
     <main role="main" class="pb-3">
-        @if (TempData["IsUpdated"] is bool IsUpdated)
-                {
-                    if (IsUpdated)
-                    {
-                        <div id="Alert" class="alert alert-success alert-dismissible fade show">
-                            <i class="bi bi-check-circle-fill me-2"></i>
-                            Member Updated Successfully
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                    }
-
-                    else
-
-                    {
-                        @* Show Error Message if Member Failed To update*@
-                        <div id="Alert" class="alert alert-danger alert-dismissible fade show">
-                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                             Failed To Update
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div> 
-                    }
-                }
+        
 
         <div class="container mt-5">
             <div class="row justify-content-center">
@@ -35,12 +14,21 @@
                             <div class="text-center mt-3">
                                 <img src="~/images/@Model.Photo" alt="@Model.Name" class="rounded-circle"
                                      style="width: 120px; height: 120px; object-fit: cover; border: 3px solid #fff; margin-top: -60px;" />
+           
+
                             </div>
                             <div class="card-body text-center">
                                 <h2 class="mb-1 text-primary-color">@Model.Name</h2>
-                                <form asp-controller="Members" asp-action="EditMember" method="post">
+                                <form asp-controller="Members" asp-action="Update" method="post">
                                     <div class="mt-4 text-start">
                                         <div class="row g-3">
+                                            <div class="col-12">
+                                                <div class="p-3 bg-light rounded">
+                                                    <small class="text-muted d-block mb-1">Name</small>
+                                                    <input asp-for="Name" class="form-control" />
+                                                    <span asp-validation-for="Name" class="text-danger"></span>
+                                                </div>
+                                            </div>
                                             <div class="col-12">
                                                 <div class="p-3 bg-light rounded">
                                                     <small class="text-muted d-block mb-1">Email</small>
@@ -102,7 +90,12 @@
 
     </main>
 </div>
+@section NoRender
+{
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
 
+}
 @* @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 } *@

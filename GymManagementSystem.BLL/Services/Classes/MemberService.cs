@@ -133,18 +133,52 @@ namespace GymManagementSystem.BLL.Services.Classes
 
 
         //update
-        public Task<UpdateMemberViewModel> GetMemberToUpdateAsync(int memberId, UpdateMemberViewModel model, CancellationToken ct)
+        public async Task<UpdateMemberViewModel> GetMemberToUpdateAsync(int memberId, CancellationToken ct)
         {
-            throw new NotImplementedException();
+            var member = await _memberRepository.GetByIdAcync(memberId);
+            if (member is null)
+                return null;
+            var data = new UpdateMemberViewModel()
+            {
+                Photo = member.Photo,
+                Phone = member.Phone,
+                Name = member.Name,
+                Email = member.Email,
+                BuildingNumber = member.Address.BuildingNumber,
+                Street=member.Address.Street,
+                City=member.Address.City,
+
+
+            };
+            return data;
         }
 
 
 
-        //delete
-        public Task<bool> UpdateMemberAsync(int memberId, UpdateMemberViewModel model, CancellationToken ct)
+      
+        public async Task<bool> UpdateMemberAsync(int memberId, UpdateMemberViewModel model, CancellationToken ct)
         {
-            throw new NotImplementedException();
+            var member = await _memberRepository.GetByIdAcync(memberId, ct);
+
+            var EmailCheck = await _memberRepository.AnyAsync(m => m.Email == model.Email && m.Id != memberId, ct);
+            var PhoneCheck = await _memberRepository.AnyAsync(m => m.Phone == model.Phone && m.Id != memberId, ct);
+
+            if (EmailCheck || PhoneCheck) return false;
+            member.Name = model.Name;
+            member.Email=model.Email;
+            member.Phone=model.Phone;
+            member.Photo=model.Photo;
+            member.Address.BuildingNumber = model.BuildingNumber;
+            member.Address.Street = model.Street;
+            member.Address.City = model.City;
+            member.DateOfBirth = model.DateOfBirth;
+            member.LastUpdatedAt = DateTime.UtcNow;
+
+            var updateMember = await _memberRepository.UpdateAcync(member, ct);
+            return updateMember > 0;
         }
+
+            //delete
         public async Task<bool> DeleteMemberAsync(int memberId, CancellationToken ct)
         {
             var member =await _memberRepository.GetByIdAcync(memberId);

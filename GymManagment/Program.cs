@@ -18,7 +18,7 @@ namespace GymManagment
             //builder.Services.AddScoped<IPlanRepository, PlanRepository>();
             builder.Services.AddScoped<IMemberRepository, MemberRepository>();
             builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-            //builder.Services.AddScoped<IPlanRepository, TestRepository>();
+            builder.Services.AddScoped<IPlanService,PlanService>();
             builder.Services.AddScoped<IMemberService,MemberService>();
             builder.Services.AddDbContext<GymDbContext> (options =>
             {

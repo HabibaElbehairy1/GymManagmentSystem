@@ -73,17 +73,23 @@ namespace GymManagment.PL.Controllers
 
         //update
         [HttpGet]
-        public async Task<IActionResult> Update(int id,UpdateMemberViewModel model)
+        public async Task<IActionResult> Update(int id,CancellationToken ct)
         {
-            return View(model);
+            var data = await _memberService.GetMemberToUpdateAsync(id ,ct);
+            return View(data);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(int id,UpdateMemberViewModel model, CancellationToken ct)
+        public async Task<IActionResult> Update(int id, UpdateMemberViewModel model, CancellationToken ct)
         {
-            bool result = await _memberService.UpdateMemberAsync(id ,model,ct);
-            TempData["IsUpdated"] = result;
-            return View(model);
+            if (ModelState.IsValid)
+            {
+                bool result = await _memberService.UpdateMemberAsync(id, model, ct);
+
+                TempData["IsUpdated"] = result;
+            }
+            return RedirectToAction("Index");
+
         }
 
         //delete
