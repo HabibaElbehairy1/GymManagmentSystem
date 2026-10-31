@@ -1,5 +1,6 @@
 ﻿using GymManagementSystem.BLL.Services.Interfaces;
 using GymManagementSystem.BLL.ViewModels.Members;
+using GymManagment.DAL;
 using GymManagment.DAL.Models;
 using GymManagment.DAL.Models.Enums;
 using GymManagment.DAL.Repositories.Interfaces;
@@ -14,26 +15,16 @@ namespace GymManagementSystem.BLL.Services.Classes
 {
     public class MemberService : IMemberService
     {
-        private readonly IGenericRepository<Member> _memberRepository;
-        private readonly IGenericRepository<MemberShip> _membershipRepository;
-        private readonly IGenericRepository<Plan> _memberPlanRepository;
-        private readonly IGenericRepository<HealthRecord> _memberHealthRepository;
+        private readonly IUnitOfWork _unitOFWork;
 
-        public MemberService
-            (IGenericRepository<Member> memberRepository,
-             IGenericRepository<MemberShip> membershipRepository,
-             IGenericRepository<Plan> memberPlanRepository,
-             IGenericRepository<HealthRecord> memberHealthRepository)
+        public MemberService(IUnitOfWork unitOFWork)
         {
-            _memberHealthRepository = memberHealthRepository;
-            _memberRepository = memberRepository;
-            _membershipRepository = membershipRepository;
-            _memberPlanRepository = memberPlanRepository;
+            _unitOFWork = unitOFWork;
         }
         //all member
         public async Task<IEnumerable<MemberViewModel>> GetMembersAsync(CancellationToken ct)
         {
-            var members = await _memberRepository.GetAllAcync(ct:ct);
+            var members = await _unitOFWork.GetRepository<Member>().GetAllAcync(ct:ct);
             var membersViewModels = members.Select(member => new MemberViewModel()
             {
                 Id = member.Id,
@@ -51,11 +42,17 @@ namespace GymManagementSystem.BLL.Services.Classes
         //member details
         public async Task<MemberViewModel?> GetMemberDetailsAsync(int memberId, CancellationToken ct)
         {
-            var member = await _memberRepository.GetByIdAcync(memberId,ct);
-            var activePlan = await _membershipRepository.FirstOrDefaultAsync( m => m.MemberId == memberId && m.EndDate>DateTime.Now , ct);
-            var plan = await _memberPlanRepository.FirstOrDefaultAsync(p => p.Id == activePlan.PlanId && p.IsActive ==true, ct);
+            var member = await _unitOFWork.GetRepository<Member>().GetByIdAcync(memberId,ct);
             if (member is null)
                 return null;
+
+
+            var activePlan = await _unitOFWork.GetRepository<MemberShip>().FirstOrDefaultAsync(m => m.MemberId == memberId && m.EndDate > DateTime.Now, ct);
+            Plan? plan = null;
+            if (activePlan is not null)
+            {
+                plan = await _unitOFWork.GetRepository<Plan>().FirstOrDefaultAsync(p => p.Id == activePlan.PlanId && p.IsActive == true, ct);
+            }
             var model = new MemberViewModel()
             {
                 Id = member.Id,
@@ -68,13 +65,13 @@ namespace GymManagementSystem.BLL.Services.Classes
                 Address = $"{member.Address.BuildingNumber } - {member.Address.Street} Street - {member.Address.City}",
  
             };
-            if (activePlan is not null && plan is not null) 
+
+            if (activePlan is not null && plan is not null)
             {
                 model.MemberShipStartDate = activePlan.CreatedAt.ToString();
                 model.MemberShipEndDate = activePlan.EndDate.ToString();
                 model.PlanName = plan.Name;
             }
-
             return model;
         }
 
@@ -82,7 +79,7 @@ namespace GymManagementSystem.BLL.Services.Classes
         //health record
         public async Task<HealthRecordViewModel> GetMemberHealthRecordAsync(int memberId, CancellationToken ct)
         {
-            var memberHealth = await _memberHealthRepository.FirstOrDefaultAsync(h => h.MemberId == memberId, ct);
+            var memberHealth = await _unitOFWork.GetRepository<HealthRecord>().FirstOrDefaultAsync(h => h.MemberId == memberId, ct);
 
             if (memberHealth is null)
                 return null;
@@ -100,8 +97,8 @@ namespace GymManagementSystem.BLL.Services.Classes
         //create
         public async Task<bool> CreateMemberAsync(CreateMemberViewModel model, CancellationToken ct)
         {
-            var EmailCheck = await _memberRepository.AnyAsync(m => m.Email == model.Email ,ct);
-            var PhoneCheck = await _memberRepository.AnyAsync(m => m.Phone == model.Phone ,ct);
+            var EmailCheck = await _unitOFWork.GetRepository<Member>().AnyAsync(m => m.Email == model.Email ,ct);
+            var PhoneCheck = await _unitOFWork.GetRepository<Member>().AnyAsync(m => m.Phone == model.Phone ,ct);
 
             if(EmailCheck || PhoneCheck) 
                 return false;
@@ -126,8 +123,9 @@ namespace GymManagementSystem.BLL.Services.Classes
                     Note = model.HealthRecordViewModel.Note,
                 },
             };
-            var createMember = await _memberRepository.AddAcync(member, ct);
-            return createMember > 0;
+             _unitOFWork.GetRepository<Member>().Add(member);
+            var result = await _unitOFWork.SaveChangesAsync(ct);
+            return result > 0;
 
         }
 
@@ -135,7 +133,7 @@ namespace GymManagementSystem.BLL.Services.Classes
         //update
         public async Task<UpdateMemberViewModel> GetMemberToUpdateAsync(int memberId, CancellationToken ct)
         {
-            var member = await _memberRepository.GetByIdAcync(memberId);
+            var member = await _unitOFWork.GetRepository<Member>().GetByIdAcync(memberId);
             if (member is null)
                 return null;
             var data = new UpdateMemberViewModel()
@@ -158,10 +156,10 @@ namespace GymManagementSystem.BLL.Services.Classes
       
         public async Task<bool> UpdateMemberAsync(int memberId, UpdateMemberViewModel model, CancellationToken ct)
         {
-            var member = await _memberRepository.GetByIdAcync(memberId, ct);
+            var member = await _unitOFWork.GetRepository<Member>().GetByIdAcync(memberId, ct);
 
-            var EmailCheck = await _memberRepository.AnyAsync(m => m.Email == model.Email && m.Id != memberId, ct);
-            var PhoneCheck = await _memberRepository.AnyAsync(m => m.Phone == model.Phone && m.Id != memberId, ct);
+            var EmailCheck = await _unitOFWork.GetRepository<Member>().AnyAsync(m => m.Email == model.Email && m.Id != memberId, ct);
+            var PhoneCheck = await _unitOFWork.GetRepository<Member>().AnyAsync(m => m.Phone == model.Phone && m.Id != memberId, ct);
 
             if (EmailCheck || PhoneCheck) return false;
             member.Name = model.Name;
@@ -174,17 +172,21 @@ namespace GymManagementSystem.BLL.Services.Classes
             member.DateOfBirth = model.DateOfBirth;
             member.LastUpdatedAt = DateTime.UtcNow;
 
-            var updateMember = await _memberRepository.UpdateAcync(member, ct);
-            return updateMember > 0;
+             _unitOFWork.GetRepository<Member>().Update(member);
+            var result = await _unitOFWork.SaveChangesAsync(ct);
+            return result > 0;
+        
         }
 
             //delete
         public async Task<bool> DeleteMemberAsync(int memberId, CancellationToken ct)
         {
-            var member =await _memberRepository.GetByIdAcync(memberId);
+            var member =await _unitOFWork.GetRepository<Member>().GetByIdAcync(memberId);
             if (member is null) return false;
-            var deleteM = await _memberRepository.DeleteAcync(member, ct);
-            return deleteM > 0;
+            _unitOFWork.GetRepository<Member>().Delete(member);
+            var result = await _unitOFWork.SaveChangesAsync(ct);
+            return result > 0;
+
         }
 
     }

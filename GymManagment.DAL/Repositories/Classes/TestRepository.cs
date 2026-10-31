@@ -9,12 +9,22 @@ namespace GymManagment.DAL.Repositories.Classes
 {
     public class TestRepository : IPlanRepository
     {
+        public void Add(Plan entity)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<int> AddAcync(Plan p, CancellationToken ct = default)
         {
             throw new NotImplementedException();
         }
 
         public Task<bool> AnyAsync(Expression<Func<Plan, bool>> predicate, CancellationToken ct = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Delete(Plan entity)
         {
             throw new NotImplementedException();
         }
@@ -40,6 +50,11 @@ namespace GymManagment.DAL.Repositories.Classes
         }
 
         public Task<Plan?> GetByIdAcync(int id, CancellationToken ct = default)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Update(Plan entity)
         {
             throw new NotImplementedException();
         }
