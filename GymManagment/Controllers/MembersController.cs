@@ -31,8 +31,8 @@ namespace GymManagment.PL.Controllers
             var member = await _memberService.GetMemberDetailsAsync(Id, ct);
             if (member is null) 
             {
-                return RedirectToAction("Index");
                 TempData["ErrorMessage"] = " Member Not Found !";
+                return RedirectToAction("Index");
             }
             return View(member);
         }
