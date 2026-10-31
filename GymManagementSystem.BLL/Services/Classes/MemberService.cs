@@ -66,8 +66,7 @@ namespace GymManagementSystem.BLL.Services.Classes
                 Gender = member.Gender.ToString(),
                 DateOfBirth = member.DateOfBirth.ToString(),
                 Address = $"{member.Address.BuildingNumber } - {member.Address.Street} Street - {member.Address.City}",
-
-                
+ 
             };
             if (activePlan is not null && plan is not null) 
             {
@@ -104,7 +103,8 @@ namespace GymManagementSystem.BLL.Services.Classes
             var EmailCheck = await _memberRepository.AnyAsync(m => m.Email == model.Email ,ct);
             var PhoneCheck = await _memberRepository.AnyAsync(m => m.Phone == model.Phone ,ct);
 
-            if(EmailCheck || PhoneCheck) return false;
+            if(EmailCheck || PhoneCheck) 
+                return false;
             var member = new Member()
             {
                 Name = model.Name,
