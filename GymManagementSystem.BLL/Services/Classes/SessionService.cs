@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.Execution;
+using GymManagementSystem.BLL.Common;
 using GymManagementSystem.BLL.Services.Interfaces;
 using GymManagementSystem.BLL.ViewModels.Sessions;
 using GymManagment.DAL;
@@ -46,6 +47,8 @@ namespace GymManagementSystem.BLL.Services.Classes
         public async Task<bool> CreateSessionAsync(CreateSessionViewModel model, CancellationToken ct)
         {
             var session = _mapper.Map<Session>(model);
+
+
 
             _repo.Add(session);
             var result = await _unitOfWork.SaveChangesAsync(ct);
