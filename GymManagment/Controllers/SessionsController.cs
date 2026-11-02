@@ -3,16 +3,23 @@ using GymManagementSystem.BLL.Services.Interfaces;
 using GymManagementSystem.BLL.ViewModels.Members;
 using GymManagementSystem.BLL.ViewModels.Sessions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GymManagment.PL.Controllers
 {
     public class SessionsController : Controller
     {
-        private readonly SessionService _sessionService;
+        private readonly ISessionService _sessionService;
 
-        public SessionsController(SessionService sessionService)
+        public SessionsController(ISessionService sessionService)
         {
             _sessionService = sessionService;
+        }
+
+        private async Task LoadDropdownsAsync(CancellationToken ct)
+        {
+            ViewBag.Categories = new SelectList(await _sessionService.GetCategoriesAsync(ct), "Id", "Name");
+            ViewBag.Trainers = new SelectList(await _sessionService.GetTrainersAsync(ct), "Id", "Name");
         }
         //index
         public async Task<IActionResult> Index(CancellationToken ct)
@@ -36,14 +43,14 @@ namespace GymManagment.PL.Controllers
 
         //create
         [HttpGet]
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(CancellationToken ct)
         {
+            await LoadDropdownsAsync(ct);
             return View();
-
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(SessionViewModel model, CancellationToken ct)
+        public async Task<IActionResult> Create(CreateSessionViewModel model, CancellationToken ct)
         {
             if (ModelState.IsValid)
             {
@@ -64,12 +71,13 @@ namespace GymManagment.PL.Controllers
         [HttpGet]
         public async Task<IActionResult> Update(int id, CancellationToken ct)
         {
-            var data = await _sessionService.ViewSessionToUpdateAsync(id, ct);
+            await LoadDropdownsAsync(ct);
+            var data = await _sessionService.GetSessionToUpdateAsync(id, ct);
             return View(data);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(int id, SessionViewModel model, CancellationToken ct)
+        public async Task<IActionResult> Update(int id, UpdateSessionViewModel model, CancellationToken ct)
         {
             if (ModelState.IsValid)
             {
@@ -95,5 +103,6 @@ namespace GymManagment.PL.Controllers
             TempData["IsDeleted"] = result;
             return RedirectToAction("Index");
         }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using GymManagementSystem.BLL.Services.Interfaces;
+﻿using AutoMapper;
+using GymManagementSystem.BLL.Services.Interfaces;
 using GymManagementSystem.BLL.ViewModels.Members;
 using GymManagementSystem.BLL.ViewModels.Plans;
 using GymManagment.DAL;
@@ -16,11 +17,13 @@ namespace GymManagementSystem.BLL.Services.Classes
     public class PlanService : IPlanService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
         private readonly IGenericRepository<Plan> _repo;
 
-        public PlanService(IUnitOfWork unitOfWork)
+        public PlanService(IUnitOfWork unitOfWork , IMapper mapper)
         {
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
             _repo = _unitOfWork.GetRepository<Plan>();
         }
 
@@ -28,15 +31,7 @@ namespace GymManagementSystem.BLL.Services.Classes
         public async Task<IEnumerable<PlanViewModel>> GetPlansAsync(CancellationToken ct)
         {
             var plans = await _repo.GetAllAcync(ct:ct);
-            var getPlans = plans.Select(plan => new PlanViewModel()
-            {
-                Id = plan.Id,
-                Name = plan.Name,
-                Price = plan.Price,
-                Description = plan.Description,
-                DurationDays = plan.DurationDays,
-                IsActive = plan.IsActive,
-            });
+            var getPlans = _mapper.Map<IEnumerable<PlanViewModel>>(plans);
 
             return getPlans;
         }
@@ -48,15 +43,7 @@ namespace GymManagementSystem.BLL.Services.Classes
             var plan = await _repo.GetByIdAcync(planId,ct);
             if (plan is null)
                 return null;
-            var getPlan = new PlanViewModel()
-            {
-                Id = plan.Id,
-                Name = plan.Name,
-                Price = plan.Price,
-                Description = plan.Description,
-                DurationDays = plan.DurationDays,
-                IsActive = plan.IsActive,
-            };
+            var getPlan = _mapper.Map<PlanViewModel>(plan);
             return getPlan;
         }
 
@@ -83,13 +70,7 @@ namespace GymManagementSystem.BLL.Services.Classes
             var plan = await _repo.GetByIdAcync(planId, ct);
             if (plan is null)
                 return null;
-            var updatePlan = new UpdatePlanModelView()
-            {
-                PlanName = plan.Name,
-                Description = plan.Description,
-                DurationDays = plan.DurationDays,
-                Price= plan.Price,
-            };
+            var updatePlan = _mapper.Map<UpdatePlanModelView>(plan);
             return updatePlan;
         }
 
@@ -97,9 +78,8 @@ namespace GymManagementSystem.BLL.Services.Classes
         {
             var plan = await _repo.GetByIdAcync(planId, ct);
 
-            plan.Description = model.Description;
-            plan.DurationDays = model.DurationDays;
-            plan.Price = model.Price;
+            _mapper.Map(model, plan);
+            plan.LastUpdatedAt = DateTime.UtcNow;
 
             _repo.Update(plan);
             var result = await _unitOfWork.SaveChangesAsync(ct);

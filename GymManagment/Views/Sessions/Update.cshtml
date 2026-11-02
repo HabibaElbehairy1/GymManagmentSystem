@@ -1,6 +1,7 @@
-﻿@model SessionViewModel
+﻿@model UpdateSessionViewModel
 @{
     ViewData["Title"] = "Update Session";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <div class="container mt-4">
     <header class="mb-4">
@@ -25,7 +26,7 @@
                                 <label asp-for="TrainerId" class="form-label fw-semibold">
                                     Trainer <span class="text-danger">*</span>
                                 </label>
-                                <select asp-for="TrainerId" asp-items="ViewBag.Trainers" class="form-select">
+                                <select asp-for="TrainerId" asp-items="(SelectList)ViewBag.Trainers" class="form-select">
                                     <option value="">Select Trainer</option>
                                 </select>
                                 <span asp-validation-for="TrainerId" class="text-danger"></span>
@@ -79,7 +80,10 @@
     </form>
 </div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+@section NoRender
+{
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+
 }
 

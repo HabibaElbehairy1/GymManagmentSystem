@@ -1,4 +1,4 @@
-﻿@model SessionViewModel
+﻿@model CreateSessionViewModel
 @{
     ViewData["Title"] = "Create Session";
 }
@@ -21,7 +21,26 @@
                             <hr class="mt-2">
                         </div>
 
-                        
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="CategoryId" class="form-label fw-semibold">
+                                    Category <span class="text-danger">*</span>
+                                </label>
+                                <select asp-for="CategoryId" asp-items="(SelectList)ViewBag.Categories" class="form-select">
+                                    <option value="">Select Category</option>
+                                </select>
+                                <span asp-validation-for="CategoryId" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="TrainerId" class="form-label fw-semibold">
+                                    Trainer <span class="text-danger">*</span>
+                                </label>
+                                <select asp-for="TrainerId" asp-items="(SelectList)ViewBag.Trainers" class="form-select">
+                                    <option value="">Select Trainer</option>
+                                </select>
+                                <span asp-validation-for="TrainerId" class="text-danger"></span>
+                            </div>
 
                             <div class="col-12">
                                 <label asp-for="Description" class="form-label fw-semibold">
@@ -81,7 +100,7 @@
     </form>
 </div>
 
-@section Scripts {
+@section NoRender {
     <partial name="_ValidationScriptsPartial" />
 
     <script>
