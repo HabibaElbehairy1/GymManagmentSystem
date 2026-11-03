@@ -1,12 +1,12 @@
 ﻿using GymManagementSystem.BLL.Services.Interfaces;
-using GymManagement.BLL.ViewModels.MemberShip;
+using GymManagementSystem.BLL.ViewModels.MemberShip;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Data;
 using GymManagementSystem.BLL.Services.Classes;
 
-namespace GymManagement.PL.Controllers
+namespace GymManagement.Controllers
 {
     //[Authorize]
     public class MembershipController : Controller

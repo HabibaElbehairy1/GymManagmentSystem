@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using GymManagement.BLL.ViewModels.MemberShip;
+using GymManagementSystem.BLL.ViewModels.MemberShip;
 using GymManagementSystem.BLL.Common;
 using GymManagement.DAL;
 using GymManagement.DAL.Models;

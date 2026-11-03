@@ -1,5 +1,5 @@
 ﻿
-using GymManagement.BLL.ViewModels.MemberShip;
+using GymManagementSystem.BLL.ViewModels.MemberShip;
 using GymManagementSystem.BLL.Common;
 
 namespace GymManagementSystem.BLL.Services.Classes

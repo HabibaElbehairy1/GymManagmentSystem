@@ -1,4 +1,4 @@
-﻿namespace GymManagement.BLL.ViewModels.MemberShip
+﻿namespace GymManagementSystem.BLL.ViewModels.MemberShip
 
 {
     public class MemberShipViewModel
