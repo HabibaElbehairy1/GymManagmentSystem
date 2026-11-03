@@ -1,12 +1,9 @@
 ﻿using AutoMapper;
 using GymManagementSystem.BLL.Services.Interfaces;
 using GymManagementSystem.BLL.ViewModels.Trainers;
-using GymManagment.DAL;
-using GymManagment.DAL.Models;
-using GymManagment.DAL.Models.Enums;
-using GymManagment.DAL.Repositories.Classes;
-using GymManagment.DAL.Repositories.Interfaces;
-using GymManagment.Models;
+using GymManagement.DAL;
+using GymManagement.DAL.Models;
+using GymManagement.DAL.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;

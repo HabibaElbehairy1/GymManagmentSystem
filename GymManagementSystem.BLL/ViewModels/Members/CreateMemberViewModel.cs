@@ -1,4 +1,4 @@
-using GymManagment.DAL.Models.Enums;
+using GymManagement.DAL.Models.Enums;
 //using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;

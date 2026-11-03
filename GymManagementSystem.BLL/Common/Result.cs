@@ -4,7 +4,7 @@ using System.Text;
 
 namespace GymManagementSystem.BLL.Common
 {
-    public record Result(bool success, string? message = null, ResultKind Kind = ResultKind.Ok)
+    public record Result(bool Success, string? Message = null, ResultKind Kind = ResultKind.Ok)
     {
         public static Result Ok() => new(true);
         public static Result Fail(string message , ResultKind kind) => new(false, message, kind);

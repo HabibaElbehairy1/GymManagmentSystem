@@ -2,10 +2,10 @@
 using GymManagementSystem.BLL.Services.Interfaces;
 using GymManagementSystem.BLL.ViewModels.Members;
 using GymManagementSystem.BLL.ViewModels.Plans;
-using GymManagment.DAL;
-using GymManagment.DAL.Models;
-using GymManagment.DAL.Repositories.Interfaces;
-using GymManagment.Models;
+using GymManagement.DAL;
+using GymManagement.DAL.Models;
+using GymManagement.DAL.Repositories.Interfaces;
+using GymManagement.Models;
 using System;
 using System.Collections.Generic;
 using System.Net.WebSockets;

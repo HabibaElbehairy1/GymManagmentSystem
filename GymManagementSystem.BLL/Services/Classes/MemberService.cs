@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using GymManagementSystem.BLL.Services.Interfaces;
 using GymManagementSystem.BLL.ViewModels.Members;
-using GymManagment.DAL;
-using GymManagment.DAL.Models;
-using GymManagment.DAL.Models.Enums;
-using GymManagment.DAL.Repositories.Interfaces;
-using GymManagment.Models;
+using GymManagement.DAL;
+using GymManagement.DAL.Models;
+using GymManagement.DAL.Models.Enums;
+using GymManagement.DAL.Repositories.Interfaces;
+using GymManagement.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;

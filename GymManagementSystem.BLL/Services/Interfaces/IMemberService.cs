@@ -1,5 +1,5 @@
 ﻿using GymManagementSystem.BLL.ViewModels.Members;
-using GymManagment.DAL.Models;
+using GymManagement.DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;

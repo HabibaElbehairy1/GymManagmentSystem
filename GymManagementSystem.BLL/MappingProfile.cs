@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
+using GymManagement.BLL.ViewModels.MemberShip;
 using GymManagementSystem.BLL.ViewModels.Members;
 using GymManagementSystem.BLL.ViewModels.Plans;
 using GymManagementSystem.BLL.ViewModels.Sessions;
 using GymManagementSystem.BLL.ViewModels.Trainers;
-using GymManagment.DAL.Models;
-using GymManagment.Models;
+using GymManagement.DAL.Models;
+using GymManagement.Models;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -87,7 +88,26 @@ namespace GymManagementSystem.BLL
             CreateMap<UpdateTrainerViewModel, Trainer>()
                 .ForMember(d => d.Id, o => o.Ignore())
                 .ForMember(d => d.Specialty, o => o.MapFrom(s => s.Specialties))
-                .ForMember(d => d.Address, o => o.Ignore());   
+                .ForMember(d => d.Address, o => o.Ignore());
+
+
+
+            //membership
+            CreateMap<MemberShip, MemberShipForMemberViewModel>()
+                     .ForMember(dist => dist.MemberName, Option => Option.MapFrom(Src => Src.Member.Name))
+                     .ForMember(dist => dist.PlanName, Option => Option.MapFrom(Src => Src.Plan.Name))
+                     .ForMember(dist => dist.StartDate, Option => Option.MapFrom(X => X.CreatedAt));
+
+            CreateMap<MemberShip, MemberShipViewModel>()
+                     .ForMember(dist => dist.MemberName, Option => Option.MapFrom(Src => Src.Member.Name))
+                     .ForMember(dist => dist.PlanName, Option => Option.MapFrom(Src => Src.Plan.Name))
+                                          .ForMember(dist => dist.StartDate, Option => Option.MapFrom(X => X.CreatedAt));
+
+            CreateMap<CreateMemberShipViewModel, MemberShip>()
+                .ForMember(d => d.Member, o => o.Ignore())
+                .ForMember(d => d.Plan, o => o.Ignore());
+            CreateMap<Member, MemberSelectListViewModel>();
+            CreateMap<Plan, PlanSelectListViewModel>();
 
         }
     }
