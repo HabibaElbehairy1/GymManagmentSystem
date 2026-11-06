@@ -5,6 +5,7 @@ using GymManagement.DAL.Repositories.Interfaces;
 using GymManagement.DbContexts;
 
 using GymManagementSystem.BLL;
+using GymManagementSystem.BLL.Services.Attachment;
 using GymManagementSystem.BLL.Services.Classes;
 using GymManagementSystem.BLL.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -35,6 +36,8 @@ namespace GymManagement
             builder.Services.AddScoped<IBookingService, BookingService>();
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IAttachmentService, AttachmentService>();
+
             builder.Services.AddAutoMapper(m => m.AddProfile(new MappingProfile()));
             builder.Services.AddDbContext<GymDbContext> (options =>
             {

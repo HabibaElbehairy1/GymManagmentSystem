@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Text;
+using GymManagementSystem.BLL.Services.Attachment;
 
 namespace GymManagementSystem.BLL.Services.Classes
 {
@@ -18,12 +19,16 @@ namespace GymManagementSystem.BLL.Services.Classes
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IAttachmentService _attachmentService;
         private readonly IGenericRepository<Member> _repo;
 
-        public MemberService(IUnitOfWork unitOfWork ,IMapper mapper)
+        public MemberService(IUnitOfWork unitOfWork,
+                             IMapper mapper,
+                             IAttachmentService attachmentService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _attachmentService = attachmentService;
             _repo = _unitOfWork.GetRepository<Member>();
 
         }
@@ -85,10 +90,21 @@ namespace GymManagementSystem.BLL.Services.Classes
 
             if(EmailCheck || PhoneCheck) 
                 return false;
+            var fileName = await _attachmentService.UploadAsync(model.PhotoFile.OpenReadStream() , "MembersPicture" , model.PhotoFile.FileName , ct);
+            if(string.IsNullOrWhiteSpace(fileName)) return false;
+
             var member = _mapper.Map<Member>(model);
+            member.Photo = fileName;
             _repo.Add(member);
+
             var result = await _unitOfWork.SaveChangesAsync(ct);
-            return result > 0;
+            if (result > 0)
+                return true;
+            else
+            {
+                _attachmentService.Delete("MembersPicture",fileName);
+                return false;
+            }
 
         }
 
@@ -106,32 +122,57 @@ namespace GymManagementSystem.BLL.Services.Classes
 
 
 
-      
+
         public async Task<bool> UpdateMemberAsync(int memberId, UpdateMemberViewModel model, CancellationToken ct)
         {
             var member = await _repo.GetByIdAcync(memberId, ct);
+            if (member is null) return false;
 
-            var EmailCheck = await _repo.AnyAsync(m => m.Email == model.Email && m.Id != memberId, ct);
-            var PhoneCheck = await _repo.AnyAsync(m => m.Phone == model.Phone && m.Id != memberId, ct);
+            var emailCheck = await _repo.AnyAsync(m => m.Email == model.Email && m.Id != memberId, ct);
+            var phoneCheck = await _repo.AnyAsync(m => m.Phone == model.Phone && m.Id != memberId, ct);
+            if (emailCheck || phoneCheck) return false;
 
-            if (EmailCheck || PhoneCheck) return false;
+            string? newFileName = null;
+            var oldFileName = member.Photo;
+
+            if (model.PhotoFile is not null && model.PhotoFile.Length > 0)
+            {
+                newFileName = await _attachmentService.UploadAsync(
+                    model.PhotoFile.OpenReadStream(), "MembersPicture", model.PhotoFile.FileName, ct);
+
+                if (string.IsNullOrWhiteSpace(newFileName)) return false;
+
+                member.Photo = newFileName;
+            }
+
             member.Name = model.Name;
-            member.Email=model.Email;
-            member.Phone=model.Phone;
-            member.Photo=model.Photo;
-            member.Address.BuildingNumber = model.BuildingNumber;
-            member.Address.Street = model.Street;
-            member.Address.City = model.City;
+            member.Email = model.Email;
+            member.Phone = model.Phone;
             member.DateOfBirth = model.DateOfBirth;
             member.LastUpdatedAt = DateTime.UtcNow;
 
+            member.Address ??= new Address();
+            member.Address.BuildingNumber = model.BuildingNumber;
+            member.Address.Street = model.Street;
+            member.Address.City = model.City;
+
             _repo.Update(member);
             var result = await _unitOfWork.SaveChangesAsync(ct);
-            return result > 0;
-        
+
+            if (result > 0)
+            {
+                if (newFileName is not null && !string.IsNullOrWhiteSpace(oldFileName))
+                    _attachmentService.Delete("MembersPicture", oldFileName);
+                return true;
+            }
+
+            if (newFileName is not null)
+                _attachmentService.Delete("MembersPicture", newFileName);
+
+            return false;
         }
 
-            //delete
+        //delete
         public async Task<bool> DeleteMemberAsync(int memberId, CancellationToken ct)
         {
             var member = await _repo.GetByIdAcync(memberId);

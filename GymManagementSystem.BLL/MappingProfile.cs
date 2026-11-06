@@ -16,10 +16,15 @@ namespace GymManagementSystem.BLL
     public class MappingProfile : Profile
     {
         public MappingProfile()
-        { 
+        {
             //Member
-            CreateMap<CreateMemberViewModel,Member>();
-
+            CreateMap<CreateMemberViewModel, Member>()
+                    .ForMember(d => d.Address, o => o.MapFrom(s => new Address
+                    {
+                        BuildingNumber = s.BuildingNumber,
+                        Street = s.Street,
+                        City = s.City
+                    }));
             CreateMap<Member, MemberViewModel>()
                 .ForMember(D => D.DateOfBirth, o => o.MapFrom(s => s.DateOfBirth.ToShortDateString()))
                 .ForMember(D => D.Address, o => o.MapFrom(s => $"{s.Address.BuildingNumber} - {s.Address.Street} Street - {s.Address.City}"));

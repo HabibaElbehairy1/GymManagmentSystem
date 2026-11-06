@@ -1,4 +1,5 @@
 //using GymManagementSystem.DAL.Models.Enums;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,9 +11,12 @@ namespace GymManagementSystem.BLL.ViewModels.Members
     {
         //[Required(ErrorMessage = "Name Is Required")]
         //[RegularExpression(@"^[a-zA-Z]\s+$", ErrorMessage = "Name Can Only Contain a Letter")]
+        public int Id { get; set; }
+
         public string? Name { get; set; }
 
         public string? Photo { get; set; }
+        public IFormFile? PhotoFile { get; set; }
 
         [Required(ErrorMessage = "Email Is Required")]
         [EmailAddress(ErrorMessage = "Invalid Email Format")]

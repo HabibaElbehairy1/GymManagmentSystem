@@ -1,4 +1,6 @@
 using GymManagement.DAL.Models.Enums;
+using Microsoft.AspNetCore.Http;
+
 //using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -11,7 +13,7 @@ namespace GymManagementSystem.BLL.ViewModels.Members
     {
         [Required(ErrorMessage = "Profile Picture Is Required")]
         [Display(Name = "Profile Picture")]
-        public string Photo { get; set; } = null!;
+        public IFormFile PhotoFile { get; set; } = null!;
         [Required(ErrorMessage ="Name Is Required")]
         [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage ="Name Can Only Contain a Letter")]
         public string Name { get; set; } = string.Empty;
@@ -31,10 +33,11 @@ namespace GymManagementSystem.BLL.ViewModels.Members
         [Required(ErrorMessage = "Gender  Is Required")]
 
         public Gender Gender { get; set; }
+
+
         public int BuildingNumber { get; set; }
 
         [Required(ErrorMessage = "City Is Required")]
-        [StringLength(100, MinimumLength = 2, ErrorMessage = "Building Number Must Beetween 2 and 100")]
         [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "City Can Only Contain a Letter")]
         public string City { get; set; } = string.Empty;
 
