@@ -1,12 +1,13 @@
 ﻿using GymManagement.DAL.Models;
 using GymManagement.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 
 namespace GymManagement.DbContexts
 {
-    public class GymDbContext : DbContext
+    public class GymDbContext : IdentityDbContext<ApplicationUser>
     {
         public GymDbContext(DbContextOptions<GymDbContext> options) : base(options)  
         {
@@ -16,6 +17,7 @@ namespace GymManagement.DbContexts
         {
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<ApplicationUser>().ToTable("User");
         }
 
         public DbSet<Booking> Bookings { get; set; }

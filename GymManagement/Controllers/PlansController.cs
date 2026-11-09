@@ -1,15 +1,19 @@
-﻿using GymManagementSystem.BLL.Services.Interfaces;
-using GymManagement.DAL.Repositories.Classes;
+﻿using GymManagement.DAL.Repositories.Classes;
 using GymManagement.DAL.Repositories.Interfaces;
-using GymManagementSystem.BLL.Services.Interfaces;
-using GymManagementSystem.BLL.ViewModels.Plans;
 using GymManagement.DbContexts;
 using GymManagement.Models;
+using GymManagementSystem.BLL.Services.Interfaces;
+using GymManagementSystem.BLL.Services.Interfaces;
+using GymManagementSystem.BLL.ViewModels.Plans;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace GymManagement.Controllers
 {
+    [Authorize(Roles = "SuperAdmin")]
+
+
     public class PlansController : Controller
     {
         private readonly IPlanService _planService;

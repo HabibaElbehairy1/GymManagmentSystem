@@ -1,12 +1,15 @@
-using GymManagementSystem.BLL.Services.Interfaces;
+using GymManagement.Models;
 using GymManagementSystem.BLL.Services.Classes;
 using GymManagementSystem.BLL.Services.Interfaces;
-using GymManagement.Models;
+using GymManagementSystem.BLL.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
 namespace GymManagement.Controllers
 {
+    [Authorize]
+
     public class HomeController : Controller
     {
         private readonly IAnalyticsService _analyticsService;

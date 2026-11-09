@@ -1,16 +1,20 @@
-﻿using GymManagementSystem.BLL.Services.Interfaces;
-using GymManagementSystem.BLL.ViewModels.Members;
-using GymManagement.DAL.Models;
+﻿using GymManagement.DAL.Models;
 using GymManagement.DAL.Repositories.Classes;
 using GymManagement.DAL.Repositories.Interfaces;
 using GymManagement.Models;
+using GymManagementSystem.BLL.Services.Attachment;
+using GymManagementSystem.BLL.Services.Interfaces;
+using GymManagementSystem.BLL.ViewModels.Members;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using GymManagementSystem.BLL.Services.Attachment;
 
 namespace GymManagement.PL.Controllers
 {
+    [Authorize(Roles = "SuperAdmin")]
+
+
     public class MembersController : Controller
     {
         private readonly IMemberService _memberService;

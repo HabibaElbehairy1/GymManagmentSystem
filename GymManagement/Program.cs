@@ -1,5 +1,6 @@
 using GymManagement.DAL;
 using GymManagement.DAL.DataSeeding;
+using GymManagement.DAL.Models;
 using GymManagement.DAL.Repositories.Classes;
 using GymManagement.DAL.Repositories.Interfaces;
 using GymManagement.DbContexts;
@@ -8,6 +9,7 @@ using GymManagementSystem.BLL;
 using GymManagementSystem.BLL.Services.Attachment;
 using GymManagementSystem.BLL.Services.Classes;
 using GymManagementSystem.BLL.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace GymManagement
@@ -44,10 +46,25 @@ namespace GymManagement
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
 
+
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.Password.RequiredLength = 8;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireDigit = true;
+                options.SignIn.RequireConfirmedAccount = false;
+            })
+                .AddEntityFrameworkStores<GymDbContext>()
+                .AddDefaultTokenProviders();
+
             var app = builder.Build();
             using var scope = app.Services.CreateScope();
             var _context = scope.ServiceProvider.GetRequiredService<GymDbContext>();
             var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
             var folderPath = Path.Combine(app.Environment.ContentRootPath, "wwwroot", "files");
             var pendingMigrations = await _context.Database.GetPendingMigrationsAsync();
@@ -57,6 +74,7 @@ namespace GymManagement
                 await _context.Database.MigrateAsync();
             }
             await GymDataSeeding.SeedAsync(_context ,  logger,folderPath );
+            await IdentityDataSeeding.SeedIdentityDataAsync(userManager, roleManager, logger, app.Configuration);
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
@@ -68,6 +86,7 @@ namespace GymManagement
             app.UseHttpsRedirection();
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapStaticAssets();

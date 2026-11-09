@@ -8,7 +8,8 @@ using GymManagementSystem.BLL.Services.Classes;
 
 namespace GymManagement.Controllers
 {
-    //[Authorize]
+    [Authorize(Roles = "SuperAdmin")]
+
     public class MembershipController : Controller
     {
         private readonly IMembershipService _membershipService;
