@@ -195,6 +195,7 @@ GymManagmentSystem/
 Junior Backend .NET Developer
 
 [![GitHub](https://img.shields.io/badge/GitHub-HabibaElbehairy1-181717?style=for-the-badge&logo=github)](https://github.com/HabibaElbehairy1)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect%20with%20me-0A66C2?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/habiba-elbehairy/)
 
 [View this project on GitHub](https://github.com/HabibaElbehairy1/GymManagmentSystem)
 
